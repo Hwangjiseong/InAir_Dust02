@@ -17,8 +17,6 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
     
     var locationManager = CLLocationManager()
     
-    
-    
     var annotation: BusanData?
     var annotations: Array = [BusanData]()
     
@@ -70,6 +68,15 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
         super.viewDidLoad()
         self.title = "부산 미세먼지 지도"
         // Do any additional setup after loading the view, typically from a nib.
+//        locationManager.delegate = self
+//        locationManager.stopUpdatingLocation()
+//        locationManager.requestWhenInUseAuthorization()
+//
+//        myMapView.showsUserLocation = true
+//        myMapView.userLocation.title = "현재 위치"
+//        myMapView.showsCompass = true
+
+        
         
         // 사용자 현재 위치 트랙킹
         locationManager.delegate = self
@@ -78,7 +85,7 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
             locationManager.requestWhenInUseAuthorization()
             locationManager.requestAlwaysAuthorization()
         }
-        
+
         locationManager.startUpdatingLocation()
         
         // 사용자 현재 위치, 캠파스 표시
@@ -225,24 +232,29 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
         myMapView.setRegion(region, animated: true)
     }
     
+    
+    // 35.165981, 129.072522
     @IBAction func changeToOriginLocation(_ sender: Any) {
         
-        let currnetLoc: CLLocation = locationManager.location!
-        let location = CLLocationCoordinate2D(latitude: currnetLoc.coordinate.latitude, longitude: currnetLoc.coordinate.longitude)
+        let currentLoc: CLLocation = locationManager.location!
+        let location = CLLocationCoordinate2D(latitude: currentLoc.coordinate.latitude, longitude: currentLoc.coordinate.longitude)
         let span = MKCoordinateSpan(latitudeDelta: 0.20, longitudeDelta: 0.20)
         let region = MKCoordinateRegion(center: location, span: span)
         myMapView.setRegion(region, animated: true)
         
     }
     
+    // 반경(span)
     func changeStepperLocation(sLat: Double, sLong: Double) {
         
-        let currnetLoc: CLLocation = locationManager.location!
-        let location = CLLocationCoordinate2D(latitude: currnetLoc.coordinate.latitude, longitude: currnetLoc.coordinate.longitude)
+        let currentLoc: CLLocation = locationManager.location!
+        
+        let location = CLLocationCoordinate2D(latitude: currentLoc.coordinate.latitude, longitude: currentLoc.coordinate.longitude)
         let span = MKCoordinateSpan(latitudeDelta: sLat, longitudeDelta: sLong)
         let region = MKCoordinateRegion(center: location, span: span)
         myMapView.setRegion(region, animated: true)
         
+ 
     }
     
     @IBAction func stepperPressed(_ sender: Any) {
@@ -289,7 +301,7 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
                 //let pm10Val = castBusanData?.pm10
                 let pm10Station = castBusanData?.title
                 //let pm10ValCai = castBusanData?.pm10Cai
-                print("\(String(describing: pm10Station)) pm10 val = \(String(describing: pm10Val))")
+                print("\(String(describing: pm10Station)) pm10val = \(String(describing: pm10Val))")
                 
                 annotationView?.glyphTintColor = UIColor.lightGray
                 annotationView?.glyphText = pm10Val
@@ -320,7 +332,7 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
             annotationView?.rightCalloutAccessoryView = btn
             return annotationView
             
-        } else if seg_index == 1 {  // PM25
+        } else if seg_index == 1 { //co2
             let reuseID = "co2"
             var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseID) as? MKMarkerAnnotationView
             var iCo2Val = 0
