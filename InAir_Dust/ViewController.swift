@@ -17,11 +17,7 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
     
     var locationManager = CLLocationManager()
     
-    //    var annotationPM10: BusanDataPM10?
-    //    var annotationPM25: BusanDataPM25?
     
-    //    var annotationsPM10: Array = [BusanDataPM10]()
-    //    var annotationsPM25: Array = [BusanDataPM25]()
     
     var annotation: BusanData?
     var annotations: Array = [BusanData]()
@@ -46,7 +42,7 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
 
     
     var pm10Val: String?  // value test
-    var pm25Val: String?
+    var pmco2Val: String?
     
     // 1시간 마다 호출위해 타이머 객체 생성
     var timer = Timer()
@@ -325,9 +321,9 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
             return annotationView
             
         } else if seg_index == 1 {  // PM25
-            let reuseID = "pm25"
+            let reuseID = "co2"
             var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseID) as? MKMarkerAnnotationView
-            var iPm25Val = 0
+            var iCo2Val = 0
             
             if annotation is MKUserLocation {
                 return nil
@@ -339,24 +335,24 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
                 annotationView?.animatesWhenAdded = true
                 
                 let castBusanData = annotationView!.annotation as? BusanData
-                pm25Val = castBusanData?.co2
+                pmco2Val = castBusanData?.co2
                 
-                iPm25Val = Int(pm25Val!)!
-                print("iPm25Val = \(iPm25Val)")
+                iCo2Val = Int(pmco2Val!)!
+                print("pmco2Val = \(pmco2Val)")
                 
                 annotationView?.glyphTintColor = UIColor.lightGray
                 //                annotationView?.glyphText = String(iPm25Val)
                 
-                annotationView?.glyphText = pm25Val
+                annotationView?.glyphText = pmco2Val
                 
-                switch iPm25Val {
-                case 0..<16:
+                switch iCo2Val {
+                case 0..<450:
                     annotationView?.markerTintColor = UIColor.blue // 좋음
-                case 16..<36:
+                case 451..<1000:
                     annotationView?.markerTintColor = UIColor.green // 보통
-                case 36..<75:
+                case 1001..<2000:
                     annotationView?.markerTintColor = UIColor.yellow // 나쁨
-                case 76..<500:
+                case 2001..<5000:
                     annotationView?.markerTintColor = UIColor.red // 매우나쁨
                 default : break
                 }
@@ -406,22 +402,22 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
             self.present(ac, animated: true, completion: nil)
             
         } else if segControlBtn.selectedSegmentIndex == 1 {
-            let vPM25 = viewAnno.co2
+            let vCO2 = viewAnno.co2
             let vStation = viewAnno.title
             //let vPM25Cai = viewAnno.pm10Cai
             
-            print("PM25 = \(String(describing: vPM25))")
+            print("CO2 = \(String(describing: vCO2))")
             
-            let dPM25: Int = Int(vPM25!)!
+            let dCO2: Int = Int(vCO2!)!
             
-            switch Int(dPM25) {
-            case 0..<31:
+            switch Int(dCO2) {
+            case 0..<450:
                 tco2 = "좋음" // 좋음
-            case 31..<81:
+            case 451..<1000:
                 tco2 = "보통"// 보통
-            case 81..<151:
+            case 1001..<2000:
                 tco2 = "나쁨" // 나쁨
-            case 76..<500:
+            case 2001..<5000:
                 tco2 = "매우나쁨" // 매우나쁨
             default : break
             }
@@ -434,7 +430,7 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
             //                default : mPM25Cai = "오류"
             //            }
             
-            let mTitle = "미세먼지(PM 2.5) : \(tco2!)(\(vPM25!) ug/m3)"
+            let mTitle = " 이산화탄소(CO2) : \(tco2!)(\(vCO2!) ug/m3)"
             let ac = UIAlertController(title: vStation! + " 대기질 측정소", message: nil, preferredStyle: .alert)
             ac.addAction(UIAlertAction(title: "측정시간 : " + currentTime! , style: .default, handler: nil))
             ac.addAction(UIAlertAction(title: mTitle, style: .default, handler: nil))

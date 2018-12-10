@@ -13,7 +13,7 @@
         <!--View Controller-->
         <scene sceneID="Qum-UO-YsO">
             <objects>
-                <viewController id="uQ9-yd-s5X" customClass="ViewController" customModule="BusanMap02" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="uQ9-yd-s5X" customClass="ViewController" customModule="InAir_Dust" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Bkb-df-WDC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -22,10 +22,10 @@
                                 <rect key="frame" x="0.0" y="64" width="375" height="559"/>
                             </mapView>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="MsK-Ma-YHT">
-                                <rect key="frame" x="134" y="84" width="107" height="29"/>
+                                <rect key="frame" x="139" y="84" width="97" height="29"/>
                                 <segments>
                                     <segment title="PM10"/>
-                                    <segment title="PM2.5"/>
+                                    <segment title="CO2"/>
                                 </segments>
                                 <connections>
                                     <action selector="segControlPressed:" destination="uQ9-yd-s5X" eventType="valueChanged" id="pkA-p0-l1h"/>
