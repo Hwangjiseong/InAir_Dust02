@@ -2,10 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>사용할때만 위치정보 허용</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>항상 위치정보 허용</string>
+	<string>항상 위치정보 허용이 필요함</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>앱을 사용할때 위치정보 허용이 필요함</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

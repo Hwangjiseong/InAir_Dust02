@@ -15,16 +15,20 @@ class BusanData: NSObject, MKAnnotation {
     var subtitle: String?
     var pm10: String?
     var co2: String?
-   
+    var no2: String?
     
    
     
-    init(coordinate: CLLocationCoordinate2D, title: String, subtitle: String, pm10: String, co2: String) {
+   
+    
+    init(coordinate: CLLocationCoordinate2D, title: String, subtitle: String, pm10: String, co2: String, no2: String) {
         self.coordinate = coordinate
         self.title = title
         self.subtitle = subtitle
         self.pm10 = pm10
         self.co2 = co2
+        self.no2 = no2
+       
        
     }
 }

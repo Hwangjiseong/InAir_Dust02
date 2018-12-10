@@ -34,13 +34,13 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
    
     
     var tPM10: String?
-   
-    
     var tco2: String?
+    var tno2: String?
 
     
     var pm10Val: String?  // value test
     var pmco2Val: String?
+    var no2Val: String?
     
     // 1시간 마다 호출위해 타이머 객체 생성
     var timer = Timer()
@@ -52,7 +52,7 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
     
     // 광복동, 초량동
     let addrs:[String:[String]] = [
-        "201111" : ["중구 남포동 구덕로 지하 12", "35.098041", "129.035033", "남포역 대합실"],
+        "201111" : ["중구 남포동 구덕로 지하 12", "35.098041", "129.035033", "남포역 대합실",],
         "201191" : ["부산진구 부전동 260-22", "35.1583462", "129.0582437"," 1호선 대합실"],
         "201193" : ["부산진구 부전2동 중앙대로 720-1", "35.1570747", "129.0583408", "서면역 1호선 승강장"],
         "202191" : ["부산진구 부전동 257-63", "35.1570747", "129.0583408"," 2호선 대합실"],
@@ -66,15 +66,8 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "부산 미세먼지 지도"
-        // Do any additional setup after loading the view, typically from a nib.
-//        locationManager.delegate = self
-//        locationManager.stopUpdatingLocation()
-//        locationManager.requestWhenInUseAuthorization()
-//
-//        myMapView.showsUserLocation = true
-//        myMapView.userLocation.title = "현재 위치"
-//        myMapView.showsCompass = true
+        self.title = "부산 지하철역 실내공기질"
+
 
         
         
@@ -121,6 +114,14 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
             removeAllAnnotations()
             
             mapDisplay()
+        } else if segControlBtn.selectedSegmentIndex == 2 {
+            print("Seg 2 pressed")
+            //zoomToRegion()
+            //            annotations.removeAll()
+            removeAllAnnotations()
+            
+            mapDisplay()
+            
         }
         print(annotations.count, self.myMapView.annotations.count)
     }
@@ -129,6 +130,7 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
         
         for item in items {
             let dSite = item["areaIndex"]
+            var dSiteName = ""
             print("dSite = \(items.count) \(String(describing: dSite))")
             
             // 추가 데이터 처리
@@ -140,17 +142,19 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
                     loc = value[3]
                     dLat = Double(lat!)
                     dLong = Double(long!)
+                    dSiteName = item["site"]!
                 }
             }
             
             // 파싱 데이터 처리
             let dPM10 = item["pm10"]
             let dco2 = item["co2"]
+            let dno2 = item["no2"]
            
             
             annotation = BusanData(coordinate: CLLocationCoordinate2D(latitude: dLat!, longitude: dLong!),
-                                   title: dSite!, subtitle: loc!,
-                                   pm10: dPM10!,co2: dco2!)
+                                   title: dSiteName, subtitle: loc!,
+                                   pm10: dPM10!, co2: dco2!, no2: dno2!)
             
             annotations.append(annotation!)
         }
@@ -281,7 +285,7 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
         
         let seg_index = segControlBtn.selectedSegmentIndex
         
-        if seg_index == 0 {  // PM10
+        if seg_index == 0 { // PM10
             let reuseID = "pm10"
             var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseID) as? MKMarkerAnnotationView
             var iPm10Val = 0
@@ -375,11 +379,62 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
             let btn = UIButton(type: .detailDisclosure)
             annotationView?.rightCalloutAccessoryView = btn
             return annotationView
-        } else {
+        } else if seg_index == 2 {  // no2
+            let reuseID = "no2"
+            var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseID) as? MKMarkerAnnotationView
+            var ino2Val: Double = 0
             
-            return annotation as! MKAnnotationView
+            if annotation is MKUserLocation {
+                return nil
+            }
+            
+            if annotationView == nil {
+                annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: reuseID)
+                annotationView!.canShowCallout = true
+                annotationView?.animatesWhenAdded = true
+                
+                let castBusanData = annotationView!.annotation as? BusanData
+                no2Val = castBusanData?.no2
+                //print("Test: \(no2Val)")
+                
+                //let pmno2Val = castBusanData?.no2
+                let no2Station = castBusanData?.title
+                //let pm10ValCai = castBusanData?.pm10Cai
+                print("\(String(describing: no2Station)) no2Val = \(String(describing: no2Val))")
+                
+                annotationView?.glyphTintColor = UIColor.lightGray
+                annotationView?.glyphText = no2Val
+                
+                if no2Val != nil {
+                    ino2Val = Double(no2Val!)!
+                   
+                } else {
+                    // dumy value
+                    //iPm10Val = 0
+                }
+                
+                switch ino2Val {
+                case 0..<31:
+                    annotationView?.markerTintColor = UIColor.blue // 좋음
+                case 31..<81:
+                    annotationView?.markerTintColor = UIColor.green // 보통
+                case 81..<151:
+                    annotationView?.markerTintColor = UIColor.yellow
+                case 151..<600:
+                    annotationView?.markerTintColor = UIColor.red // 매우나쁨
+                default : break
+                }
+            } else {
+                annotationView?.annotation = annotation
+            }
+            
+            let btn = UIButton(type: .detailDisclosure)
+            annotationView?.rightCalloutAccessoryView = btn
+            return annotationView
         }
+            return annotation as! MKAnnotationView
     }
+    
     
    
     // rightCalloutAccessoryView를 눌렀을때 호출되는 delegate method
@@ -434,13 +489,7 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
             default : break
             }
             
-            //            switch vPM25Cai {
-            //                case "1": mPM25Cai = "좋음"
-            //                case "2": mPM25Cai = "보통"
-            //                case "3": mPM25Cai = "나쁨"
-            //                case "4": mPM25Cai = "아주나쁨"
-            //                default : mPM25Cai = "오류"
-            //            }
+    
             
             let mTitle = " 이산화탄소(CO2) : \(tco2!)(\(vCO2!) ug/m3)"
             let ac = UIAlertController(title: vStation! + " 대기질 측정소", message: nil, preferredStyle: .alert)
@@ -450,8 +499,42 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
             ac.addAction(UIAlertAction(title: "닫기", style: .cancel, handler: nil))
             self.present(ac, animated: true, completion: nil)
             
+        }else if segControlBtn.selectedSegmentIndex == 2 {
+            let vNo2 = viewAnno.no2
+            let vStation = viewAnno.title
+            //let vPM25Cai = viewAnno.pm10Cai
+            
+            print("NO2 = \(String(describing: vNo2))")
+            
+            let dNO2: Double = Double(vNo2!)!
+            
+            switch dNO2 {
+            case 0..<0.03:
+                tno2 = "좋음" // 좋음
+            case 0.031..<0.06:
+                tno2 = "보통"// 보통
+            case 0.061..<0.20:
+                tno2 = "나쁨" // 나쁨
+            case 0.21..<2.049:
+                tno2 = "매우나쁨" // 매우나쁨
+            default : break
+            }
+            
+        
+            
+            let mTitle = " 이산화질소(NO2) : \(tno2!)(\(vNo2!) ug/m3)"
+            let ac = UIAlertController(title: vStation! + " 대기질 측정소", message: nil, preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "측정시간 : " + currentTime! , style: .default, handler: nil))
+            ac.addAction(UIAlertAction(title: mTitle, style: .default, handler: nil))
+            
+            ac.addAction(UIAlertAction(title: "닫기", style: .cancel, handler: nil))
+            self.present(ac, animated: true, completion: nil)
+            
         }
     }
-}
+    }
+    
+
+
 
 
