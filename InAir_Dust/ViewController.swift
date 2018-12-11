@@ -66,7 +66,7 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "부산 지하철역 실내공기질"
+        self.title = "부산실내공기질"
 
 
         
@@ -266,16 +266,19 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
         switch stepVal {
         case 1:
             print("Tesp 1")
-            changeStepperLocation(sLat: 0.28, sLong: 0.28)
+            changeStepperLocation(sLat: 0.20, sLong: 0.20)
         case 2:
             print("Tesp 2")
-            changeStepperLocation(sLat: 0.20, sLong: 0.20)
+            changeStepperLocation(sLat: 0.12, sLong: 0.12)
         case 3:
             print("Tesp 3")
-            changeStepperLocation(sLat: 0.12, sLong: 0.12)
+            changeStepperLocation(sLat: 0.04, sLong: 0.04)
         case 4:
             print("Tesp 4")
-            changeStepperLocation(sLat: 0.04, sLong: 0.04)
+            changeStepperLocation(sLat: 0.02, sLong: 0.02)
+        case 5:
+            print("Tesp 5")
+            changeStepperLocation(sLat: 0.008, sLong: 0.008)
         default:
             break
         }
