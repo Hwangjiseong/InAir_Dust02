@@ -230,7 +230,7 @@ class ViewController: UIViewController, MKMapViewDelegate, XMLParserDelegate, CL
     }
     
     func zoomToRegion() {
-        let location = CLLocationCoordinate2D(latitude: 35.180100, longitude: 129.081017)
+        let location = CLLocationCoordinate2D(latitude: 35.280100, longitude: 129.081017)
         let span = MKCoordinateSpan(latitudeDelta: 0.27, longitudeDelta: 0.27)
         let region = MKCoordinateRegion(center: location, span: span)
         myMapView.setRegion(region, animated: true)
